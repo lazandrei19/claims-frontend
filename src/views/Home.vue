@@ -33,7 +33,6 @@ export default class Home extends Vue {
 
   public host(): void {
     this.$store.commit('ADD_USERNAME', this.username);
-    this.$store.commit('HOSTING', true);
     fetch(`/host/game-${this.gameId}`, {
       method: 'POST',
       cache: 'no-cache',
@@ -49,6 +48,7 @@ export default class Home extends Vue {
       } else {
         this.$store.commit('GAME_ID', this.gameId);
         this.$socket.client.emit('join', `game-${this.gameId}`, this.$store.state.self.username);
+        this.$store.commit('HOSTING', true);
         this.$router.push('lobby');
       }
     }).catch((response) => {

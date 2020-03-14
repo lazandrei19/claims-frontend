@@ -33,11 +33,11 @@ import { Component, Vue } from 'vue-property-decorator';
 @Component
 export default class GameLobby extends Vue {
   startGame() {
-    this.$socket.client.emit('start', `game-${this.$store.state.game.id}`);
+    this.$socket.client.emit('start', `game-${this.$store.state.id}`);
   }
 
   get players() {
-    return [this.$store.state.self, ...this.$store.state.game.players];
+    return [this.$store.state.self, ...this.$store.state.players];
   }
 
   get hosting() {
@@ -45,7 +45,7 @@ export default class GameLobby extends Vue {
   }
 
   get enoughPlayers() {
-    return this.$store.state.game.players.length < 1;
+    return this.$store.state.players.length < 1;
   }
 }
 </script>

@@ -18,7 +18,8 @@ import { Component, Vue } from 'vue-property-decorator';
 @Component
 export default class PlayerList extends Vue {
   get players() {
-    return [this.$store.state.self, ...this.$store.state.game.players];
+    return [{ ...this.$store.state.self, noCards: this.$store.state.hand.length },
+      ...this.$store.state.players];
   }
 }
 </script>

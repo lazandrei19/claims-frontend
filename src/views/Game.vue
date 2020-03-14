@@ -39,15 +39,15 @@ export default class Game extends Vue {
   selected: string | null = null;
 
   get hand() {
-    return this.$store.state.game.hand;
+    return this.$store.state.hand;
   }
 
   get topCard(): GameCard {
-    return this.$store.state.game.discardPile[this.$store.state.game.discardPile.length - 1];
+    return this.$store.state.discardPile[this.$store.state.discardPile.length - 1];
   }
 
   get trumpCard(): GameCard {
-    return this.$store.state.game.trumpCard;
+    return this.$store.state.trumpCard;
   }
 
   get denySelect(): boolean {

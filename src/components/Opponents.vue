@@ -17,7 +17,7 @@ import Player from '@/game/player';
 
 export default class Opponents extends Vue {
   get players(): Array<Player> {
-    return this.$store.state.game.players;
+    return this.$store.state.players;
   }
 }
 </script>

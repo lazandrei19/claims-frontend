@@ -3,7 +3,7 @@
     <label :for="cardId" class="card" :class="[classrank, suit, {'card-disabled': cantSelectThis}]">
       <span class="rank">{{ rank }}</span>
       <span class="suit" v-html="suitHtml"></span>
-      <input type="checkbox" v-model="selected" :id="cardId" :name="cardId" @change="onChange"/>
+      <input type="checkbox" v-model="selected" :id="cardId" :name="cardId"/>
     </label>
   </strong>
   <label :for="cardId" class="card"
@@ -11,7 +11,7 @@
     <span class="rank">{{ rank }}</span>
     <span class="suit" v-html="suitHtml"></span>
     <input type="checkbox" v-model="selected" :id="cardId" :name="cardId"
-      :disabled="cantSelectThis" @change="onChange"/>
+      :disabled="cantSelectThis"/>
   </label>
 </template>
 
@@ -23,8 +23,6 @@ export default class Card extends Vue {
   @Prop() readonly rank!: string;
 
   @Prop() readonly suit!: string;
-
-  selected = false;
 
   get suitHtml(): string {
     return `&${this.suit};`;
@@ -55,12 +53,16 @@ export default class Card extends Vue {
     return diff || !this.$store.getters.myTurn;
   }
 
-  onChange(): void {
-    if (this.selected) {
+  set selected(value: boolean) {
+    if (value) {
       this.$store.commit('SELECT_CARD', this.cardId);
     } else {
       this.$store.commit('DESELECT_CARD', this.cardId);
     }
+  }
+
+  get selected(): boolean {
+    return this.$store.state.selectedCards.includes(this.cardId);
   }
 }
 </script>

@@ -10,14 +10,12 @@ export default new Store({
   state: {
     self: new Player('', ''),
     hosting: false,
-    game: {
-      players: Array<Player>(),
-      id: 0,
-      hand: Array<Card>(),
-      trumpCard: new Card('', '', 0),
-      discardPile: Array<Card>(),
-      turn: '',
-    },
+    players: Array<Player>(),
+    id: 0,
+    hand: Array<Card>(),
+    trumpCard: new Card('', '', 0),
+    discardPile: Array<Card>(),
+    turn: '',
     selectedCards: Array<string>(),
     events: Array<Event>(),
   },
@@ -29,28 +27,28 @@ export default new Store({
       state.self = new Player(username, state.self.uuid);
     },
     SOCKET_NEWPLAYER(state, { username, uuid }) {
-      state.game.players.push(new Player(username, uuid));
+      state.players.push(new Player(username, uuid));
     },
     HOSTING(state, hosting: boolean) {
       state.hosting = hosting;
     },
     GAME_ID(state, id: number) {
-      state.game.id = id;
+      state.id = id;
     },
     SOCKET_DELPLAYER(state, uuid: string) {
-      state.game.players = state.game.players.filter((e) => e.uuid !== uuid);
+      state.players = state.players.filter((e) => e.uuid !== uuid);
     },
     SOCKET_DRAWCARD(state, { rank, suit, value }) {
-      state.game.hand.push(new Card(suit, rank, value));
+      state.hand.push(new Card(suit, rank, value));
     },
     SOCKET_TRUMPCARD(state, card: Card) {
-      state.game.trumpCard = card;
+      state.trumpCard = card;
     },
     SOCKET_DISCARDPILE(state, pile: Array<Card>) {
-      state.game.discardPile = pile;
+      state.discardPile = pile;
     },
     SOCKET_PLAYER(state, uuid: string) {
-      state.game.turn = uuid;
+      state.turn = uuid;
     },
     SELECT_CARD(state, card: string) {
       state.selectedCards = [...state.selectedCards, card];
@@ -62,27 +60,36 @@ export default new Store({
       state.selectedCards = [];
     },
     SOCKET_STARTGAME(state, { hand, trumpCard, discardPile }) {
-      state.game.hand = hand.map(({ rank, suit, value }:
+      state.hand = hand.map(({ rank, suit, value }:
           { rank: string; suit: string; value: number }) => new Card(suit, rank, value));
-      state.game.trumpCard = trumpCard;
-      state.game.discardPile = discardPile;
+      state.trumpCard = trumpCard;
+      state.discardPile = discardPile;
     },
     DELETE_CARDS_BY_IDS(state, cardIds: Array<string>) {
-      state.game.hand = state.game.hand.filter((card) => !cardIds.includes(card.id));
+      state.hand = state.hand.filter((card) => !cardIds.includes(card.id));
     },
     SOCKET_PLAYERHANDS(state, playerHands) {
-      state.game.players = state.game.players.map((player) => {
+      state.players = state.players.map((player) => {
         const newPlayer = new Player(player.username, player.uuid);
         newPlayer.noCards = playerHands[player.uuid];
         newPlayer.score = player.score;
         return newPlayer;
       });
     },
+    SOCKET_PLAYERSCORES(state, scores) {
+      state.players = state.players.map((player) => {
+        const newPlayer = new Player(player.username, player.uuid);
+        newPlayer.score = scores[player.uuid];
+        newPlayer.noCards = 5;
+        return newPlayer;
+      });
+      state.self = { ...state.self, score: scores[state.self.uuid] };
+    },
   },
   getters: {
-    myTurn: (state) => state.game.turn === state.self.uuid,
-    currentPlayer: (state) => state.game.players.find((player) => player.uuid === state.game.turn),
-    handScore: (state) => state.game.hand.filter((card) => card.rank !== state.game.trumpCard.rank)
+    myTurn: (state) => state.turn === state.self.uuid,
+    currentPlayer: (state) => state.players.find((player) => player.uuid === state.turn),
+    handScore: (state) => state.hand.filter((card) => card.rank !== state.trumpCard.rank)
       .map((card) => card.value).reduce((acc, el) => acc + el, 0),
   },
   actions: {

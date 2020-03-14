@@ -3,7 +3,6 @@ import 'mutationobserver-shim';
 import Vue from 'vue';
 import VueSocketIOExt from 'vue-socket.io-extended';
 import io from 'socket.io-client';
-import Vuex from 'vuex';
 
 import App from './App.vue';
 import './registerServiceWorker';
@@ -11,7 +10,7 @@ import router from './router';
 import store from './store';
 import vuetify from './plugins/vuetify';
 
-const socket = io('http://localhost:5000/');
+const socket = io(process.env.SOCKET_IO_LOCATION);
 Vue.use(VueSocketIOExt, socket, { store });
 
 Vue.config.productionTip = false;
@@ -29,7 +28,9 @@ new Vue({
       console.log(data);
     },
     startGame() {
-      router.push('game');
+      if (router.currentRoute.name !== 'Game') {
+        router.push('game');
+      }
     },
   },
 }).$mount('#app');
